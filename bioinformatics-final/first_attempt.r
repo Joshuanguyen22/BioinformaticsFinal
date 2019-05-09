@@ -80,6 +80,8 @@ t <- table(factor(predicted, u), factor(reference, u))
 m <- confusionMatrix(t)
 plot(m$table)
 
+# https://ragrawal.wordpress.com/2011/05/16/visualizing-confusion-matrix-in-r/
+
 actual = as.data.frame(table(reference))
 names(actual) = c("Actual","ActualFreq")
 
