@@ -45,6 +45,8 @@
   y_test <- res$test$Rings
   y_validate <- res$validate$Rings
   
+  y_test_values <- y_test
+  
   y_train <- to_categorical(y_train, 3)
   y_test <- to_categorical(y_test, 3)
   y_validate <- to_categorical(y_validate, 3)
@@ -74,3 +76,35 @@
   model %>% evaluate(x_validate, y_validate)
   
   model %>% predict_classes(x_test)
+  
+  predicted <- model %>% predict_classes(x_test)
+  reference <- y_test_values
+  
+# https://ragrawal.wordpress.com/2011/05/16/visualizing-confusion-matrix-in-r/
+
+actual = as.data.frame(table(reference))
+names(actual) = c("Actual","ActualFreq")
+
+confusion = as.data.frame(table(reference, predicted))
+names(confusion) = c("Actual","Predicted","Freq")
+
+#calculate percentage of test cases based on actual frequency
+confusion = merge(confusion, actual, by=c("Actual"))
+confusion$Percent = confusion$Freq/confusion$ActualFreq*100
+
+#render plot
+# we use three different layers
+# first we draw tiles and fill color based on percentage of test cases
+tile <- ggplot() +
+  geom_tile(aes(x=Actual, y=Predicted,fill=Percent),data=confusion, color="black",size=0.1) +
+  labs(x="Actual",y="Predicted")
+tile = tile + 
+  geom_text(aes(x=Actual,y=Predicted, label=sprintf("%.1f", Percent)),data=confusion, size=3, colour="black") +
+  scale_fill_gradient(low="grey",high="red")
+
+# lastly we draw diagonal tiles. We use alpha = 0 so as not to hide previous layers but use size=0.3 to highlight border
+tile = tile + 
+  geom_tile(aes(x=Actual,y=Predicted),data=subset(confusion, as.character(Actual)==as.character(Predicted)), color="black",size=0.3, fill="black", alpha=0) 
+
+#render
+tile

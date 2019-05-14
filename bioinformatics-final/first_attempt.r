@@ -75,11 +75,6 @@ model %>% evaluate(x_test, y_test)
 predicted <- model %>% predict_classes(x_test)
 reference <- y_test_values
 
-u <- union(predicted, reference)
-t <- table(factor(predicted, u), factor(reference, u))
-m <- confusionMatrix(t)
-plot(m$table)
-
 # https://ragrawal.wordpress.com/2011/05/16/visualizing-confusion-matrix-in-r/
 
 actual = as.data.frame(table(reference))
