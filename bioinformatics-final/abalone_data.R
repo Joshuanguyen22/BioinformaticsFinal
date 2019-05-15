@@ -2,6 +2,7 @@
   
   library(keras)
   library(tidyr)
+  library(caret)
   
   abalone <- read.csv(file='abalone.csv', header=TRUE, sep=',')
   
@@ -46,6 +47,7 @@
   y_validate <- res$validate$Rings
   
   y_test_values <- y_test
+  y_validate_values <- y_validate
   
   y_train <- to_categorical(y_train, 3)
   y_test <- to_categorical(y_test, 3)
@@ -77,8 +79,8 @@
   
   model %>% predict_classes(x_test)
   
-  predicted <- model %>% predict_classes(x_test)
-  reference <- y_test_values
+  predicted <- model %>% predict_classes(x_validate)
+  reference <- y_validate_values
   
 # https://ragrawal.wordpress.com/2011/05/16/visualizing-confusion-matrix-in-r/
 
